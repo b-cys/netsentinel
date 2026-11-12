@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# data & outputs (too large for git)
+data/raw/*
+!data/raw/.gitkeep
+results/*
+!results/.gitkeep
+*.pcap
+*.pt
+models/*
+!models/.gitkeep

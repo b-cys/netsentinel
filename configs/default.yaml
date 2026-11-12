@@ -1,0 +1,46 @@
+# NetSentinel experiment config
+seed: 42
+
+data:
+  source: cicids2017          # cicids2017 | synthetic
+  raw_dir: data/raw/CIC-IDS2017
+  sample_frac: 0.3            # ~2.8M rows in full; 0.3 keeps it laptop-friendly. null = all
+  test_size: 0.2
+  val_size: 0.1
+
+reduction:
+  pca_variance: 0.95          # keep 95% of explained variance
+
+ffnn:
+  hidden: [256, 128, 64]
+  dropout: 0.2
+  lr: 0.001
+  batch_size: 1024
+  epochs: 30
+  patience: 5
+
+autoencoder:
+  hidden: [64, 32]
+  latent: 8
+  epochs: 30
+  patience: 5
+  threshold_percentile: 99.0  # alert budget: ~1% FPR on benign validation traffic
+
+zero_day:
+  holdout_families: [PortScan, WebAttack]   # removed from supervised training entirely
+
+explain:
+  shap_samples: 2000
+
+operating_point:
+  target_fpr: 0.01            # compare every model at the same alert budget
+
+adversarial:
+  eps: 0.5                    # max change per feature, in standardised units
+  steps: 20
+  # attacker-controlled features (substring match on column names)
+  mutable_keywords: [Fwd Packet Length, Fwd IAT, Flow Duration, Total Fwd Packets,
+                     Total Length of Fwd Packets, feat_0]
+
+temporal:
+  train_days: [0, 1, 2]       # Mon–Wed -> train, Thu–Fri -> test
